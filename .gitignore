@@ -1,3 +1,4 @@
 bigquery-service-account.json
 ethclusterenv
 .ipynb_checkpoints
+accounts/spamAccounts.json
