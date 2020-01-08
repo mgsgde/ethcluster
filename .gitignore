@@ -1,5 +1,5 @@
-bigquery-service-account.json
-ethclusterenv
+virtualenv_ethcluster
 .ipynb_checkpoints
 accounts/spamAccounts.json
 wdh.ipynb
+secrets
