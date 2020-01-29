@@ -3,3 +3,5 @@ virtualenv_ethcluster
 accounts/spamAccounts.json
 wdh.ipynb
 secrets
+data
+tmp*
