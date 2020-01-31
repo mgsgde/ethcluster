@@ -1,5 +1,39 @@
 
 
+with weiView as (
+
+  with weiReceivedView as (
+        
+      -- debits
+      select to_address, sum(ifnull(value, 0)) as weiReceived
+      from `ethereum_us.top40k_19_20_traces` 
+      where to_address is not null
+      and status = 1
+      and (call_type not in ('delegatecall', 'callcode', 'staticcall') or call_type is null) 
+      group by to_address
+        
+  ), weiSentView as (
+  
+      -- credits
+      select from_address, sum(ifnull(value, 0)) as weiSent
+      from  `ethereum_us.top40k_19_20_traces`
+      where from_address is not null
+      and status = 1
+      and (call_type not in ('delegatecall', 'callcode', 'staticcall') or call_type is null) 
+      group by from_address
+  ) 
+  select 
+  CASE 
+    when to_address is not null then to_address
+    when from_address is not null then from_address
+  end as address, 
+  ifnull(weiReceived,0) as weiReceived, 
+  ifnull(weiSent,0) as weiSent
+  from weiReceivedView full outer join weiSentView on from_address = to_address
+) 
+select address, weiReceived, weiSent from weiView right join `ethereum_us.top40k_addresses_22_1_2020` using(address)
+
+
 -- vorläufige feature Tabelle 
 
 select * from `masterarbeit-245718.ethereum_us.top40k_week1777_features_weiSent_weiReceived` 
