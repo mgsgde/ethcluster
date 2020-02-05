@@ -1,9 +1,74 @@
+
+# Tablename: top40k_var_timediff_receivedtx 
+
+with timestamps_diffs as (
+    
+    with timestamps_preceding_tx as (
+        
+        with timestamps_received_tx as (
+            select to_address, block_timestamp from `masterarbeit-245718.ethereum_us.traces_sampleData`
+                where to_address is not null 
+                  and status = 1 
+                  and (call_type not in ('delegatecall', 'callcode', 'staticcall') or call_type is null)
+        )
+        
+        select to_address, block_timestamp,
+            lag(block_timestamp) OVER (partition by to_address order by block_timestamp asc) as preceding_block_timestamp 
+        from timestamps_received_tx
+    )
+    
+    select to_address, block_timestamp, preceding_block_timestamp, 
+        TIMESTAMP_DIFF(block_timestamp, preceding_block_timestamp, second) as timestampdiff
+    from timestamps_preceding_tx
+)
+
+select to_address, STDDEV_SAMP(timestampdiff) as stddev_sample  
+from timestamps_diffs group by to_address
+
+# Tablename: top40k_var_timediff_senttx 
+
+with timestamps_diffs as (
+    with timestamps_preceding_tx as (
+        
+        with timestamps_sent_tx as (
+            select from_address, block_timestamp from `masterarbeit-245718.ethereum_us.traces_sampleData`
+                where to_address is not null 
+                  and status = 1 
+                  and (call_type not in ('delegatecall', 'callcode', 'staticcall') or call_type is null)
+        )
+        
+        select from_address, block_timestamp,
+            lag(block_timestamp) OVER (partition by from_address order by block_timestamp asc) as preceding_block_timestamp 
+        from timestamps_sent_tx
+    )
+    
+    select from_address, block_timestamp, preceding_block_timestamp, 
+        TIMESTAMP_DIFF(block_timestamp, preceding_block_timestamp, second) as timestampdiff
+    from timestamps_preceding_tx
+)
+select from_address, ifnull(STDDEV_SAMP(timestampdiff),0) as stddev_sample  
+from timestamps_diffs group by from_address
+
 # Tablename: top40k_features 
 
 select * from `masterarbeit-245718.ethereum_us.top40k_wei` 
 inner join `masterarbeit-245718.ethereum_us.top40k_tx` using(address) 
 inner join `masterarbeit-245718.ethereum_us.top40k_timediff_txsent` using(address) 
 inner join `masterarbeit-245718.ethereum_us.top40k_timediff_txreceived` using(address) 
+inner join `masterarbeit-245718.ethereum_us.top40k_minedblocks` using(address) 
+
+# Tablename: top40k_minedblocks 
+# umfasst auch uncles
+
+with minedBlocksView as (
+    SELECT to_address as address, count(*) as mined_blocks FROM `masterarbeit-245718.ethereum_us.top40k_traces` 
+        where trace_type = "reward"
+        and status = 1
+        group by to_address
+    )
+select address, ifnull(mined_blocks,0) as minedBlocks from minedBlocksView right join `ethereum_us.top40k_addresses_22_1_2020`  using(address)
+
+
 
 # Tablename: top40k_timediff_txreceived 
 
@@ -32,7 +97,7 @@ with timeRecView as (
   from receivedTx inner join  timeStampDiffs using(to_address)
 )
 
-select address, ifnull(avgTimeDiffBetweenReceivedTransactions,0) as avgTimeDiffBetweenReceivedTransactions from timeRecView right join `ethereum_us.top40k_addresses_22_1_2020` using(address)
+select address, ifnull(avgTimeDiffBetweenReceivedTransactions,0) as avgTimeDiffBetweenReceivedTransactions from timeRecView right join `ethereum_us.top250k_addresses_04_02_20` using(address)
 
 # Tablename: top40k_timediff_txsent 
 
@@ -59,7 +124,7 @@ with timeSentView as (
      from sentTx inner join  timeStampDiffs using(from_address)
 )
 
-select address, ifnull(avgTimeDiffBetweenSentTransactions,0) as avgTimeDiffBetweenSentTransactions from timeSentView right join `ethereum_us.top40k_addresses_22_1_2020` using(address)
+select address, ifnull(avgTimeDiffBetweenSentTransactions,0) as avgTimeDiffBetweenSentTransactions from timeSentView right join `ethereum_us.top250k_addresses_04_02_20` using(address)
 
 # Tablename: top40k_tx
 
@@ -84,7 +149,7 @@ with txView as (
     from txReceived FULL OUTER JOIN txSent on to_address = from_address
 ) 
 
-select address, numberOfTranscationsReceived, numberOfTranscationsSent from txView right join `ethereum_us.top40k_addresses_22_1_2020` using(address)
+select address, numberOfTranscationsReceived, numberOfTranscationsSent from txView right join `ethereum_us.top250k_addresses_04_02_20` using(address)
 
 # Tablename: top40k_wei 
 
@@ -119,7 +184,7 @@ with weiView as (
   ifnull(weiSent,0) as weiSent
   from weiReceivedView full outer join weiSentView on from_address = to_address
 ) 
-select address, weiReceived, weiSent from weiView right join `ethereum_us.top40k_addresses_22_1_2020`  using(address)
+select address, weiReceived, weiSent from weiView right join `ethereum_us.top250k_addresses_04_02_20`  using(address)
 
 # Tablename: top40k_traces
 
@@ -130,7 +195,7 @@ with traces as (
     and (call_type not in ('delegatecall', 'callcode', 'staticcall') or call_type is null)
 )
 select distinct transaction_hash, transaction_index, from_address, to_address, value, input, output, trace_type, call_type, reward_type, gas, gas_used, subtraces , trace_address, error , status, block_timestamp, block_number, block_hash from traces
-  INNER join `masterarbeit-245718.ethereum_us.top40k_addresses_22_1_2020` on from_address = address or to_address = address
+  INNER join `masterarbeit-245718.ethereum_us.top250k_addresses_04_02_20` on from_address = address or to_address = address
 
 # Tablename: top40k_addresses_22_1_20
 
