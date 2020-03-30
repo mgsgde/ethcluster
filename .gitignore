@@ -5,3 +5,4 @@ wdh.ipynb
 secrets
 data
 tmp*
+bigquery/build/
