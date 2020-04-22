@@ -1,5 +1,27 @@
+with double_entry_book as (
+    -- received wei
+    select to_address as address, value
+    from `bigquery-public-data.crypto_ethereum.traces`
+    where to_address is not null
+    and status = 1
+    and (call_type not in ('delegatecall', 'callcode', 'staticcall') or call_type is null)
+    union all
+    -- sent wei
+    select from_address as address, value
+    from `bigquery-public-data.crypto_ethereum.traces`
+    where from_address is not null
+    and status = 1
+    and (call_type not in ('delegatecall', 'callcode', 'staticcall') or call_type is null)
+)
+select address, sum(value) as balance
+from double_entry_book
+group by address
+order by balance desc
+limit 40000
 
-
+SELECT * from `bigquery-public-data.crypto_ethereum.traces` 
+      where DATE(block_timestamp) >= '2020-2-1' 
+      and DATE(block_timestamp) <= '2020-2-1'
 
 with traces_clean as (
     select * from `masterarbeit-245718.ethereum_us.traces_sampleData` where 
@@ -39,14 +61,7 @@ with traces_clean as (
 
 select address, countif(number_tx_sent > 0 or number_tx_received > 0) as active_months from monthly_tx group by address order by address ASC 
 
-
-
-
-
-
 SELECT from_address, count(*) OVER (PARTITION BY )
-
-
 
 SELECT *
 FROM `bigquery-public-data.crypto_ethereum.balances`
@@ -215,11 +230,11 @@ with timeRecView as (
   CASE 
     when (numberOfTranscationsReceived - 1)  > 0 then timestampDiff / (numberOfTranscationsReceived - 1) 
     else 0
-  end as avgTimeDiffBetweenReceivedTransactions
+  end as avg_time_diff_received_tx
   from receivedTx inner join  timeStampDiffs using(to_address)
 )
 
-select address, ifnull(avgTimeDiffBetweenReceivedTransactions,0) as avgTimeDiffBetweenReceivedTransactions from timeRecView right join `ethereum_us.top100k_addresses_05_02_20` using(address)
+select address, ifnull(avg_time_diff_received_tx,0) as avg_time_diff_received_tx from timeRecView right join `ethereum_us.top100k_addresses_05_02_20` using(address)
 
 # Tablename: top100k_timediff_txsent 
 
@@ -242,11 +257,11 @@ with timeSentView as (
   CASE 
     when (numberOfTranscationsSent - 1)  > 0 then timestampDiff / (numberOfTranscationsSent - 1) 
     else 0
-  end as avgTimeDiffBetweenSentTransactions
+  end as avg_time_diff_sent_tx
      from sentTx inner join  timeStampDiffs using(from_address)
 )
 
-select address, ifnull(avgTimeDiffBetweenSentTransactions,0) as avgTimeDiffBetweenSentTransactions from timeSentView right join `ethereum_us.top100k_addresses_05_02_20` using(address)
+select address, ifnull(avg_time_diff_sent_tx,0) as avg_time_diff_sent_tx from timeSentView right join `ethereum_us.top100k_addresses_05_02_20` using(address)
 
 # Tablename: top100k_tx
 
