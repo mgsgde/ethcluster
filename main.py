@@ -47,7 +47,7 @@ number_of_addresses = 100000
 
 # format: yyyy-mm-dd
 observation_period_start = "2020-01-01 00:00:00+00"
-observation_period_end = "2019-06-01 00:15:00+00"
+observation_period_end = "2019-06-01 00:00:00+00"
 
 class ADDRESS_SELECTION(Enum):
     RANDOM = 1 # selects random features.index, that have been active within the observation period.
