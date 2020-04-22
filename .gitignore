@@ -8,3 +8,4 @@ tmp*
 bigquery/build/
 build/*
 data/clustering*
+deprecated
