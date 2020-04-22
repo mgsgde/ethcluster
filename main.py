@@ -43,11 +43,11 @@ class CLUSTER_METHOD(Enum):
 
 cluster_method = CLUSTER_METHOD.KMEANS.value
 
-number_of_addresses = 1000
+number_of_addresses = 100
 
 # format: yyyy-mm-dd
 observation_period_start = "2020-01-01 00:00:00+00"
-observation_period_end = "2020-02-01 00:00:00+00"
+observation_period_end = "2020-01-01 00:15:00+00"
 
 class ADDRESS_SELECTION(Enum):
     RANDOM = 1 # selects random features.index, that have been active within the observation period.
@@ -63,7 +63,6 @@ max_bigquery_costs_usd = 2
 reset = False
 
 # run
-
 for addsel in ADDRESS_SELECTION.__members__:
     for outrem in OUTLIER_REMOVAL.__members__: 
         for clumet in CLUSTER_METHOD.__members__: 
@@ -77,7 +76,7 @@ for addsel in ADDRESS_SELECTION.__members__:
             try:
                 pm.execute_notebook(
                    './clusteranalysis.ipynb',
-                   './{}.build.ipynb'.format(experiment_id),
+                   './results/{}.result.ipynb'.format(experiment_id),
                    parameters = dict(number_of_addresses=number_of_addresses, 
                                      observation_period_start=observation_period_start,
                                      observation_period_end=observation_period_end, 
@@ -88,7 +87,8 @@ for addsel in ADDRESS_SELECTION.__members__:
                                      cluster_method = cluster_method,
                                      max_number_of_clusters = max_number_of_clusters,
                                      min_number_of_clusters = min_number_of_clusters
-                                    )
+                                    ),
+                    cwd = "."
                 )
             except Exception as e:
                 print(e)
