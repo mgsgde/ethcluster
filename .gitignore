@@ -7,3 +7,6 @@ tmp*
 bigquery/build/
 build/*
 deprecated
+data/clustering*
+data/features*
+data/test.csv
