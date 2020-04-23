@@ -3,9 +3,7 @@ virtualenv_ethcluster
 accounts/spamAccounts.json
 wdh.ipynb
 secrets
-data/features*
 tmp*
 bigquery/build/
 build/*
-data/clustering*
 deprecated
