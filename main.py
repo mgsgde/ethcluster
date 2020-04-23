@@ -76,7 +76,7 @@ for addsel in ADDRESS_SELECTION.__members__:
             try:
                 pm.execute_notebook(
                    './clusteranalysis.ipynb',
-                   './results/{}.result.ipynb'.format(experiment_id),
+                   './build/{}.result.ipynb'.format(experiment_id),
                    parameters = dict(number_of_addresses=number_of_addresses, 
                                      observation_period_start=observation_period_start,
                                      observation_period_end=observation_period_end, 
