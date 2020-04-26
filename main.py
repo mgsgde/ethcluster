@@ -60,7 +60,10 @@ address_selection = ADDRESS_SELECTION.RICHEST.value
 max_bigquery_costs_usd = 2
 
 # Delete existing tables
-reset = False
+reset_feature_tables = False
+
+# Delete existing tables
+reset_clustering_result = False
 
 # run
 for addsel in ADDRESS_SELECTION.__members__:
@@ -82,7 +85,8 @@ for addsel in ADDRESS_SELECTION.__members__:
                                      observation_period_end=observation_period_end, 
                                      address_selection=address_selection,
                                      max_bigquery_costs_usd=max_bigquery_costs_usd, 
-                                     reset = reset,
+                                     reset_feature_tables = reset_feature_tables,
+                                     reset_clustering_result = reset_clustering_result,
                                      outlier_removal = outlier_removal,
                                      cluster_method = cluster_method,
                                      max_number_of_clusters = max_number_of_clusters,
