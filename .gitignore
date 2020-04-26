@@ -7,7 +7,7 @@ tmp*
 bigquery/build/
 build/*
 deprecated
-data/clustering*
+data/cluster*
 data/features*
 data/test.csv
 mirror.sh
