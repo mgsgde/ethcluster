@@ -24,9 +24,7 @@ This project was implemented in the course of my master thesis at the Institute 
 	}
 ```
 
-* For the infura-id check out [infura.io](https://infura.io/). 
-
-* For the bigquery-service-account.json check out [cloud.google.com](https://cloud.google.com/iam/docs/creating-managing-service-account-keys). 
+For the infura-id check out [infura.io](https://infura.io/) and for the bigquery-service-account.json check out [cloud.google.com](https://cloud.google.com/iam/docs/creating-managing-service-account-keys). 
 
 ---
 **Warning**
