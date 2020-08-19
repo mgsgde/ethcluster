@@ -9,5 +9,6 @@ build/*
 deprecated
 data/cluster*
 data/features*
+data/outliers*
 data/test.csv
 mirror.sh
