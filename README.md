@@ -1,4 +1,4 @@
-# Clustering Ethereum Addresses based on Patterns in the public Transaction-Data 
+# Clustering Ethereum Addresses
 
 This project was implemented in the course of my master thesis at the Institute of Applied Informatics and Formal Description Methods (AIFB) at the KIT Department of Economics and Management. 
 
