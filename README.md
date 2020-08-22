@@ -39,10 +39,10 @@ Once connected to your gcloud service account the execution of the clusteranalys
 	python3 main.py
 ```
 
-Execute 18 different experiments. The experiments are saved in './build'.
+Execute 18 different experiments. The results of the experiments will be saved in './build'.
 
 ```bash
 	jupyter notebook
 ```
 
-Analyse the different experiments done via main.py in './build' or in './expriments'.
+With jupyter you can analyse the different experiments done via main.py in './build' or in './expriments'.
